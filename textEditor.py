@@ -49,13 +49,29 @@ typing.place(x=190, y=50)
 def colorize(evt):
 	global typing
 	typing.tag_config("RED", foreground="red")
+	typing.tag_config("BLUE", foreground="blue")
+	typing.tag_config("YELLOW", foreground="yellow")
 	this = 'this'
 	thisOffset = '+%dc' % len(this)
-	pos_start = typing.search(this, '1.0', END)
-	while pos_start:
-		pos_end = pos_start + thisOffset
-		typing.tag_add('RED', pos_start, pos_end)
-		pos_start = typing.search(this, pos_end, END)
+	function = 'function'
+	functionOffset = '+%dc' % len(function)
+	new = 'new'
+	newOffset = '+%dc' % len(new)
+	this_pos_start = typing.search(this, '1.0', END)
+	function_pos_start = typing.search(function, '1.0', END)
+	new_pos_start = typing.search(new, '1.0', END)
+	while this_pos_start:
+		this_pos_end = this_pos_start + thisOffset
+		typing.tag_add('RED', this_pos_start, this_pos_end)
+		this_pos_start = typing.search(this, this_pos_end, END)
+	while function_pos_start:
+		function_pos_end = function_pos_start + functionOffset
+		typing.tag_add('BLUE', function_pos_start, function_pos_end)
+		function_pos_start = typing.search(function, function_pos_end, END)
+	while new_pos_start:
+		new_pos_end = new_pos_start + newOffset
+		typing.tag_add('YELLOW', new_pos_start, new_pos_end)
+		new_pos_start = typing.search(new, new_pos_end, END)
 
 	#wordList = re.sub("[^\w]", " ",  typing.get("1.0", "end-1c")).split()
 	#print(wordList)
