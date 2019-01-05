@@ -25,21 +25,18 @@ def openDialog():
 		files.append(file)
 	for i in range(len(files)):
 		openFiles.insert(END, files[i])
-	#with open(location, "r").read() as openFile:
-	#	text.INSERT(1.0, openFile)
-
-#def returnFile():
-
 
 def openFile(evt):
 	global location
 	global text
+
 	w = evt.widget
 	index = int(w.curselection()[0])
 	val = w.get(index)
 	path = location + '/' + val
 	with open(path, "r") as data:
 		readData = data.read()
+		typing.delete("1.0", END)
 		typing.insert(END, readData)
 	colorize(evt)
 
@@ -51,6 +48,31 @@ def colorize(evt):
 	typing.tag_config("RED", foreground="red")
 	typing.tag_config("BLUE", foreground="blue")
 	typing.tag_config("YELLOW", foreground="yellow")
+	typing.tag_config("GREEN", foreground="green")
+
+	stringPattern = '[A-Za-z0-9-]+'
+
+	strings1 = re.findall('"' +stringPattern + '"', typing.get("1.0", "end-1c"))
+	strings2 = re.findall( "'" + stringPattern + "'", typing.get("1.0", "end-1c"))
+	print(strings1, strings2)
+
+	for i in range(len(strings1)):
+		strings1_pos_start = typing.search(strings1[i], "1.0", END)
+		strings1Offset = '+%dc' % len(strings1[i])
+
+		while strings1_pos_start:
+			strings1_pos_end = strings1_pos_start + strings1Offset
+			typing.tag_add('GREEN', strings1_pos_start, strings1_pos_end)
+			strings1_pos_start = typing.search(strings1[i], strings1_pos_end, END)
+
+	for i in range(len(strings2)):
+		strings2_pos_start = typing.search(strings2[i], "1.0", END)
+		strings2Offset = '+%dc' % len(strings2[i])
+		while strings2_pos_start:
+			strings2_pos_end = strings2_pos_start + strings2Offset
+			typing.tag_add('GREEN', strings2_pos_start, strings2_pos_end)
+			strings2_pos_start = typing.search(strings2[i], strings2_pos_end, END)
+
 	this = 'this'
 	thisOffset = '+%dc' % len(this)
 	function = 'function'
@@ -72,13 +94,6 @@ def colorize(evt):
 		new_pos_end = new_pos_start + newOffset
 		typing.tag_add('YELLOW', new_pos_start, new_pos_end)
 		new_pos_start = typing.search(new, new_pos_end, END)
-
-	#wordList = re.sub("[^\w]", " ",  typing.get("1.0", "end-1c")).split()
-	#print(wordList)
-	#for word in wordList:
-	#	if word == 'this':
-	#		typing.tag_add("BOLD", "1.0", "5.0")
-	#		print("THIS found")
 
 openFiles = Listbox(root, width=20, height=30)
 openFiles.place(x=0, y=50)
